@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<div style="display: flex; ">
+    <canvas id="myCanvas" width="600" height="600" style="border: 1px solid black;"></canvas>
+    <div style="display: flex; width: 30%; flex-direction: column; gap: 2%; margin: 5% 0 0 10%;">
+        <h3>What this tool does?</h3>
+        <ul>
+            <li>Draw a black rectangle with given height, width and an angle,</li>
+            <li>A red rectangle will be drawn automatically,</li>
+            <li>Red rectangle is drawn such that it touches all four corners of black rectangle,</li>
+            <li>Lastly, a yellow circle will be drawn at the center of black rectangle</li>
+        </ul>
+        <span></span>
+        <label>Height</label>
+        <input id="height" style="height: 20px; width: 30%;">
+        <label>Width</label>
+        <input id="width" style="height: 20px; width: 30%;">
+        <label>Angle</label>
+        <input id="angle" style="height: 20px; width: 30%;">
+        <button style="height: 20px; width: 30%; margin-left: 1%;" id="createButton">Create</button>
+    </div>
+    <div>
+        <a href="https://github.com/AryanSarang">By Aryan Sarang</a>
+    </div>
+</div>
+<script>
+    function createFigure(angleInDegree, innerDimensions) {
+        const canvas = document.getElementById('myCanvas');
+        const context = canvas.getContext('2d');
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        const ang = (angleInDegree * Math.PI) / 180;
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const innerWidth = innerDimensions.w;
+        const innerHeight = innerDimensions.h;
+        //  width of the outer rectangle to touch both corners
+        let outerWidth = Math.abs(innerWidth * Math.cos(ang) - innerHeight * Math.sin(ang));
+        // height of the outer rectangle to accommodate the rotated inner rectangle
+        let outerHeight = Math.abs(innerHeight * Math.cos(ang) - innerWidth * Math.sin(ang));
+        if (ang > 0) {
+            outerHeight = Math.abs(innerHeight * Math.cos(ang) + innerWidth * Math.sin(ang));
+            outerWidth = Math.abs(innerWidth * Math.cos(ang) + innerHeight * Math.sin(ang));
+        }
+        // position of the outer rectangle's top-left corner
+        const outerX = centerX - outerWidth / 2;
+        const outerY = centerY - outerHeight / 2;
+        // outer rectangle
+        context.fillStyle = 'red';
+        context.fillRect(outerX, outerY, outerWidth, outerHeight);
+        // Save the context state
+        context.save();
+        // Rotate the canvas context
+        context.translate(centerX, centerY);
+        context.rotate(ang);
+        // Draw the inner rectangle
+        context.fillStyle = 'black';
+        context.fillRect(-innerWidth / 2, -innerHeight / 2, innerWidth, innerHeight);
+        // Draw the yellow circle in the middle of the inner rectangle
+        context.fillStyle = 'yellow';
+        context.beginPath();
+        context.arc(0, 0, Math.min(innerWidth, innerHeight) / 4, 0, Math.PI * 2);
+        context.fill();
+        // Restore the context state
+        context.restore();
+    }
+    // Pass the Height, Width and angle to this function to change the figure
+
+
+    let createBtn = document.getElementById("createButton");
+    createBtn.addEventListener("click", function () {
+        const height = document.getElementById('height').value;
+        const width = document.getElementById('width').value;
+        const angle = document.getElementById('angle').value;
+        console.log(height);
+        createFigure(angle, {
+            w: width,
+            h: height
+        })
+    }
+    )
+
+</script>
+</body>

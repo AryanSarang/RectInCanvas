@@ -12,7 +12,7 @@
     <div style="display: flex; width: 30%; flex-direction: column; gap: 2%; margin: 5% 0 0 10%;">
         <h3>What this tool does?</h3>
         <ul>
-            <li>Draw a black rectangle with given height, width and an angle,</li>
+            <li>Draw a black rectangle with given height, width and an angle(-360° to 360°),</li>
             <li>A red rectangle will be drawn automatically,</li>
             <li>Red rectangle is drawn such that it touches all four corners of black rectangle,</li>
             <li>Lastly, a yellow circle will be drawn at the center of black rectangle</li>
@@ -22,7 +22,7 @@
         <input id="height" style="height: 20px; width: 30%;">
         <label>Width</label>
         <input id="width" style="height: 20px; width: 30%;">
-        <label>Angle</label>
+        <label>Angle (degree)</label>
         <input id="angle" style="height: 20px; width: 30%;">
         <button style="height: 20px; width: 30%; margin-left: 1%;" id="createButton">Create</button>
     </div>
@@ -41,12 +41,23 @@
         const innerWidth = innerDimensions.w;
         const innerHeight = innerDimensions.h;
         //  width of the outer rectangle to touch both corners
-        let outerWidth = Math.abs(innerWidth * Math.cos(ang) - innerHeight * Math.sin(ang));
+        let outerWidth = Math.abs(innerWidth * Math.cos(ang) + innerHeight * Math.sin(ang));
         // height of the outer rectangle to accommodate the rotated inner rectangle
-        let outerHeight = Math.abs(innerHeight * Math.cos(ang) - innerWidth * Math.sin(ang));
-        if (ang > 0) {
-            outerHeight = Math.abs(innerHeight * Math.cos(ang) + innerWidth * Math.sin(ang));
-            outerWidth = Math.abs(innerWidth * Math.cos(ang) + innerHeight * Math.sin(ang));
+        let outerHeight = Math.abs(innerHeight * Math.cos(ang) + innerWidth * Math.sin(ang));
+        // angle in 2nd quadrant
+        if ((angleInDegree > 90 && angleInDegree < 180) || (angleInDegree < -180 && angleInDegree > -270)) {
+            outerHeight = Math.abs(-innerHeight * Math.cos(ang) + innerWidth * Math.sin(ang));
+            outerWidth = Math.abs(-innerWidth * Math.cos(ang) + innerHeight * Math.sin(ang));
+        }
+        // angle in 3rd quadrant
+        if ((angleInDegree > 180 && angleInDegree < 270) || (angleInDegree > -180 && angleInDegree < -90)) {
+            outerHeight = Math.abs(-innerHeight * Math.cos(ang) - innerWidth * Math.sin(ang));
+            outerWidth = Math.abs(-innerWidth * Math.cos(ang) - innerHeight * Math.sin(ang));
+        }
+        // angle in 4th quadrant
+        if ((angleInDegree > 270 && angleInDegree < 360) || (angleInDegree > -90 && angleInDegree < 0)) {
+            outerHeight = Math.abs(innerHeight * Math.cos(ang) - innerWidth * Math.sin(ang));
+            outerWidth = Math.abs(innerWidth * Math.cos(ang) - innerHeight * Math.sin(ang));
         }
         // position of the outer rectangle's top-left corner
         const outerX = centerX - outerWidth / 2;
